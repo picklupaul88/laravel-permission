@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Livewire\User;
+namespace App\Http\Livewire\Team;
 
 use App\Http\Livewire\WithConfirmation;
 use App\Http\Livewire\WithSorting;
-use App\Models\User;
+use App\Models\Team;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
@@ -62,35 +62,35 @@ class Index extends Component
         $this->sortDirection     = 'desc';
         $this->perPage           = 100;
         $this->paginationOptions = config('project.pagination.options');
-        $this->orderable         = (new User())->orderable;
+        $this->orderable         = (new Team())->orderable;
     }
 
     public function render()
     {
-        $query = User::with(['roles', 'team'])->advancedFilter([
+        $query = Team::with(['owner'])->advancedFilter([
             's'               => $this->search ?: null,
             'order_column'    => $this->sortBy,
             'order_direction' => $this->sortDirection,
         ]);
 
-        $users = $query->paginate($this->perPage);
+        $teams = $query->paginate($this->perPage);
 
-        return view('livewire.user.index', compact('query', 'users'));
+        return view('livewire.team.index', compact('query', 'teams'));
     }
 
     public function deleteSelected()
     {
-        abort_if(Gate::denies('user_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('team_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        User::whereIn('id', $this->selected)->delete();
+        Team::whereIn('id', $this->selected)->delete();
 
         $this->resetSelected();
     }
 
-    public function delete(User $user)
+    public function delete(Team $team)
     {
-        abort_if(Gate::denies('user_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('team_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $user->delete();
+        $team->delete();
     }
 }

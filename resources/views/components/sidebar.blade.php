@@ -43,7 +43,7 @@
 
                 @can('user_management_access')
                     <li class="items-center">
-                        <a class="has-sub {{ request()->is("admin/permissions*")||request()->is("admin/roles*")||request()->is("admin/users*") ? "sidebar-nav-active" : "sidebar-nav" }}" href="#" onclick="window.openSubNav(this)">
+                        <a class="has-sub {{ request()->is("admin/permissions*")||request()->is("admin/roles*")||request()->is("admin/users*")||request()->is("admin/teams*") ? "sidebar-nav-active" : "sidebar-nav" }}" href="#" onclick="window.openSubNav(this)">
                             <i class="fa-fw fas c-sidebar-nav-icon fa-users">
                             </i>
                             {{ trans('cruds.userManagement.title') }}
@@ -76,9 +76,27 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('team_access')
+                                <li class="items-center">
+                                    <a class="{{ request()->is("admin/teams*") ? "sidebar-nav-active" : "sidebar-nav" }}" href="{{ route("admin.teams.index") }}">
+                                        <i class="fa-fw c-sidebar-nav-icon fas fa-users">
+                                        </i>
+                                        {{ trans('cruds.team.title') }}
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                 @endcan
+                @if(file_exists(app_path('Http/Controllers/Auth/UserTeamController.php')))
+                    <li class="items-center">
+                        <a href="{{ route("team.show") }}" class="{{ request()->is("team") ? "sidebar-nav-active" : "sidebar-nav" }}">
+                            <i class="fa-fw c-sidebar-nav-icon fas fa-user-friends"></i>
+                            {{ trans('global.my_team') }}
+                        </a>
+                    </li>
+                @endif
+
 
                 @if(file_exists(app_path('Http/Controllers/Auth/UserProfileController.php')))
                     @can('auth_profile_edit')
